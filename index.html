@@ -43,6 +43,21 @@
 
   <!-- area for stories (all stories, user stories, favorites) -->
   <section class="stories-container container">
+    <form action="" class="hidden" id="articleSubmissionForm">
+      <div>
+        <label for="authorInput">Author</label>
+        <input id="authorInput" type="text" placeholder="author name" required>
+      </div>
+      <div>
+        <label for="titleInput">Title</label>
+        <input id="titleInput" type="text" placeholder="article title" required>
+      </div>
+      <div>
+        <label for="urlInput">URL</label>
+        <input id="urlInput" type="url" placeholder="url" required>
+      </div>
+      <button type="submit">Submit</button>
+    </form>
 
     <!-- loading message (removed by JS after stories loaded) -->
     <div id="stories-loading-msg">Loading&hellip;</div>

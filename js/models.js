@@ -69,12 +69,37 @@ class StoryList {
   /** Adds story data to API, makes a Story instance, adds it to story list.
    * - user - the current instance of User who will post the story
    * - obj of {title, author, url}
-   *
+   * - Example
+   * {
+   *  "token": "YOUR_TOKEN_HERE",
+   *  "story": {
+   *    "author": "Matt Lane",
+   *    "title": "The best story ever",
+   *    "url": "http://google.com"
+      }
+    }
    * Returns the new Story instance
    */
 
-  async addStory( /* user, newStory */) {
-    // UNIMPLEMENTED: complete this function!
+  async addStory(user, { title, author, url }) {
+    const token = user.loginToken;
+    console.log(token);
+    const newStory = {
+      token,
+      story: {
+        author: author,
+        title: title,
+        url: url
+      }
+    }
+    const res = await axios.post(`${BASE_URL}/stories`, newStory);
+
+    const story = new Story(res.data.story);
+    console.log(story);
+
+    // Update the Stories Dataset this.stories.pop(story)?
+
+    return story;
   }
 }
 
@@ -90,13 +115,13 @@ class User {
    */
 
   constructor({
-                username,
-                name,
-                createdAt,
-                favorites = [],
-                ownStories = []
-              },
-              token) {
+    username,
+    name,
+    createdAt,
+    favorites = [],
+    ownStories = []
+  },
+    token) {
     this.username = username;
     this.name = name;
     this.createdAt = createdAt;
