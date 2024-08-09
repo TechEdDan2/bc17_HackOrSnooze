@@ -15,24 +15,49 @@ async function getAndShowStoriesOnStart() {
 /**
  * A render method to render HTML for an individual Story instance
  * - story: an instance of Story
+ * - show the delete button 
+ * - show the star button
  *
  * Returns the markup for the story.
  */
-function generateStoryMarkup(story) {
+function generateStoryMarkup(story, showDeleteBtn = false) {
   // console.debug("generateStoryMarkup", story);
 
   const hostName = story.getHostName();
 
+  //Display stars based on user
+  const showStar = Boolean(currentUser);
+
   return $(`
       <li id="${story.storyId}">
+        <div>
+        ${showDeleteBtn ? getDeleteBtn() : ""}
+        ${showStar ? getStar(story, currentUser) : ""}
         <a href="${story.url}" target="a_blank" class="story-link">
           ${story.title}
         </a>
         <small class="story-hostname">(${hostName})</small>
         <small class="story-author">by ${story.author}</small>
         <small class="story-user">posted by ${story.username}</small>
-      </li>
+        </div>
+        </li>
     `);
+}
+
+// Create the HTML for the delete button trash can
+function getDeleteBtn() {
+  return `<span class="trashCan">
+            <i class="fas fa-trash"></i>
+          </span>`;
+}
+
+// Create the HTML for the star button
+function getStar(story, user) {
+  const isFav = user.isFavorite(story);
+  const starFill = isFav ? "fas" : "far";
+  return `<span class="star">
+            <i class="${starFill} fa-star"></i>
+          </span>`;
 }
 
 /** Gets list of stories from server, generates their HTML, and puts on page. */
@@ -78,3 +103,6 @@ async function submitNewStory(e) {
 }
 
 $storySubmissionForm.on('submit', submitNewStory);
+
+// TODO add Story to favorite list
+

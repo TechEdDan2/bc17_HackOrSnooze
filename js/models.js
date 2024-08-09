@@ -261,5 +261,10 @@ class User {
       item => item.storyId !== story.storyId);
   }
 
+  isFavorite(story) {
+    return this.favorites.some(function (favSory) {
+      return favSory.storyId === story.storyId;
+    });
+  }
 
 }
