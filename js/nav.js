@@ -8,6 +8,7 @@
 
 function navAllStories(evt) {
   console.debug("navAllStories", evt);
+  evt.preventDefault();
   hidePageComponents();
   putStoriesOnPage();
 }
@@ -18,6 +19,7 @@ $body.on("click", "#nav-all", navAllStories);
 
 function navLoginClick(evt) {
   console.debug("navLoginClick", evt);
+  evt.preventDefault();
   hidePageComponents();
   $loginForm.show();
   $signupForm.show();
@@ -29,8 +31,33 @@ $navLogin.on("click", navLoginClick);
 
 function updateNavOnLogin() {
   console.debug("updateNavOnLogin");
-  $(".main-nav-links").show();
+  $(".user-nav-links").show();
   $navLogin.hide();
   $navLogOut.show();
+  $userNavLinks.removeClass('hidden');//////////HELP
   $navUserProfile.text(`${currentUser.username}`).show();
+
 }
+
+/**
+ * This function will display the story submission
+ *  form when submit is clicked.
+ * 
+ * @param {Event} evt 
+ */
+function navSubmitClick(evt) {
+  console.debug("navSubmitClick", evt);
+  evt.preventDefault();
+  hidePageComponents();
+  $storySubmissionForm.show();
+  console.log("nav submit clicked")
+}
+
+$navSubmit.on("click", navSubmitClick);
+
+// const navSubmitBtn = document.querySelector('#nav-submit');
+// navSubmitBtn.addEventListener('click', function () {
+//   console.log("nav submit btn click");
+// });
+
+//Favorites function for clicking on fav btn

@@ -27,6 +27,11 @@ class Story {
     // UNIMPLEMENTED: complete this function!
     return "hostname.com";
   }
+
+  static async getStoryById(storyId) {
+    let res = await axios.get(`${BASE_URL}/stories/${storyId}`);
+    return new Story(res.data.story);
+  }
 }
 
 
@@ -100,6 +105,17 @@ class StoryList {
     // Update the Stories Dataset this.stories.pop(story)?
 
     return story;
+  }
+
+  async deleteStory(user, storyId) {
+    const token = user.loginToken;
+    const res = await axios.post(`${BASE_URL}/stories${storyId}`, token);
+
+    // Remove the story from stories, user stories, and user favs
+    this.stories = this.stories.filter(story => story.storyId !== storyId);
+    user.ownStories = this.ownStories.filter(story => story.storyId !== storyId);
+    user.favorites = this.favorites.filter(story => story.storyId !== storyId);
+
   }
 }
 
@@ -218,4 +234,32 @@ class User {
       return null;
     }
   }
+
+  /**
+   * Takes an instance of a story and adds to the user's favorites
+   */
+  async addFavorite(story) {
+    console.log("addFavorite ran");
+    const response = await axios({
+      url: `${BASE_URL}/users/${this.username}/favorites/${story.storyId}`,
+      method: "POST",
+      data: { token: this.loginToken }
+    });
+    this.favorites.push(story);
+  }
+
+  /** Takes a Story instance and removes it from the user's favorites */
+
+  async unFavorite(story) {
+    console.log("unFavorite ran");
+    const response = await axios({
+      url: `${BASE_URL}/users/${this.username}/favorites/${story.storyId}`,
+      method: "DELETE",
+      data: { token: this.loginToken }
+    });
+    this.favorites = this.favorites.filter(
+      item => item.storyId !== story.storyId);
+  }
+
+
 }

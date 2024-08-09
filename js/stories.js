@@ -18,11 +18,11 @@ async function getAndShowStoriesOnStart() {
  *
  * Returns the markup for the story.
  */
-
 function generateStoryMarkup(story) {
   // console.debug("generateStoryMarkup", story);
 
   const hostName = story.getHostName();
+
   return $(`
       <li id="${story.storyId}">
         <a href="${story.url}" target="a_blank" class="story-link">
@@ -50,3 +50,31 @@ function putStoriesOnPage() {
 
   $allStoriesList.show();
 }
+
+//Handle Submitting Stories
+async function submitNewStory(e) {
+  console.debug("submitNewStory");
+  e.preventDefault();
+
+  //Collect new story form data
+  const author = $("#authorInput").val();
+  const title = $("#titleInput").val();
+  const url = $("#urlInput").val();
+  const username = currentUser.username;
+  const newStoryData = { title, url, author, username };
+
+  // Add this new story to the Global Story List
+  // storySubmissionForm
+
+  const newStory = await storyList.addStory(
+    username,
+    newStoryData
+  );
+
+  $storySubmissionForm.trigger("reset");
+  $storySubmissionForm.hide();
+  $allStoriesList.prepend(generateStoryMarkup(newStory));
+
+}
+
+$storySubmissionForm.on('submit', submitNewStory);
