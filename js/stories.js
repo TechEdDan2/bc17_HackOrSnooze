@@ -67,7 +67,7 @@ async function submitNewStory(e) {
   // storySubmissionForm
 
   const newStory = await storyList.addStory(
-    username,
+    currentUser,
     newStoryData
   );
 
