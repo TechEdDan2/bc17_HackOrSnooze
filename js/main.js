@@ -18,7 +18,8 @@ const $navLogOut = $("#nav-logout");
 const $navUserProfile = $("#nav-user-profile");
 const $userNavLinks = $("#user-nav-links")
 const $navSubmit = $("#nav-submit");//me
-const $navFav = $("#nav-fav")//me
+const $navFav = $("#nav-fav");//me
+const $navMyStory = $("nav-my-stories");//me 
 
 //user fav stories const $favUserStories = $("#") //me
 //user authored stories const $userAuthorStories = $("#"") //me

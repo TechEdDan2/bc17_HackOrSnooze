@@ -61,7 +61,25 @@ $navSubmit.on("click", getStorySubmissionForm);
 // });
 
 //Favorites function for clicking on fav btn
+function getFavoritesList(evt) {
+  console.debug("getFavoritesList", evt);
+  evt.preventDefault();
+  hidePageComponents();
+  //$storySubmissionForm.show();
+  console.log("nav favorites clicked");
 
+}
+
+$navFav.on("click", getFavoritesList);
 
 //My Stories
+function getMyStoriesList(evt) {
+  console.debug("getMyStoriesList", evt);
+  evt.preventDefault();
+  hidePageComponents();
+  //$storySubmissionForm.show();
+  console.log("nav my stories clicked");
 
+}
+
+$navMyStory.on("click", getMyStoriesList);
