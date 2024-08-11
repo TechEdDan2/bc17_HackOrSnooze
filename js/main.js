@@ -10,6 +10,7 @@ const $favList = $("#favlist");//me
 
 const $loginForm = $("#login-form");
 const $signupForm = $("#signup-form");
+const $accountFormBox = $("account-forms-container");//me
 const $storySubmissionForm = $("#article-submission-form");//me
 
 const $navLogin = $("#nav-login");

@@ -21,7 +21,9 @@ async function login(evt) {
   // which we'll make the globally-available, logged-in user.
   currentUser = await User.login(username, password);
 
+  $loginForm.hide();
   $loginForm.trigger("reset");
+
 
   saveUserCredentialsInLocalStorage();
   updateUIOnUserLogin();
@@ -46,6 +48,7 @@ async function signup(evt) {
   saveUserCredentialsInLocalStorage();
   updateUIOnUserLogin();
 
+  $signupForm.hide();
   $signupForm.trigger("reset");
 }
 
@@ -111,5 +114,7 @@ function updateUIOnUserLogin() {
   console.debug("updateUIOnUserLogin");
 
   $allStoriesList.show();
+  $loginForm.hide();
+  $signupForm.hide();
   updateNavOnLogin();
 }

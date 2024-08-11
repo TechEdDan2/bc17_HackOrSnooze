@@ -45,15 +45,15 @@ function updateNavOnLogin() {
  * 
  * @param {Event} evt 
  */
-function navSubmitClick(evt) {
-  console.debug("navSubmitClick", evt);
+function getStorySubmissionForm(evt) {
+  console.debug("getStorySubmissionForm", evt);
   evt.preventDefault();
   hidePageComponents();
   $storySubmissionForm.show();
-  console.log("nav submit clicked")
+  console.log("nav submit clicked");
 }
 
-$navSubmit.on("click", navSubmitClick);
+$navSubmit.on("click", getStorySubmissionForm);
 
 // const navSubmitBtn = document.querySelector('#nav-submit');
 // navSubmitBtn.addEventListener('click', function () {
@@ -61,3 +61,7 @@ $navSubmit.on("click", navSubmitClick);
 // });
 
 //Favorites function for clicking on fav btn
+
+
+//My Stories
+
