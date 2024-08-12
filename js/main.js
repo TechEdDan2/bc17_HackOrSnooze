@@ -6,7 +6,9 @@ const $body = $("body");
 
 const $storiesLoadingMsg = $("#stories-loading-msg");
 const $allStoriesList = $("#all-stories-list");
+const $storiesList = $(".stories-list");
 const $favList = $("#favlist");//me
+const $myStoriesList = $("myStoriesList");//me
 
 const $loginForm = $("#login-form");
 const $signupForm = $("#signup-form");
@@ -19,7 +21,7 @@ const $navUserProfile = $("#nav-user-profile");
 const $userNavLinks = $("#user-nav-links")
 const $navSubmit = $("#nav-submit");//me
 const $navFav = $("#nav-fav");//me
-const $navMyStory = $("nav-my-stories");//me 
+const $navMyStory = $("#nav-my-stories");//me 
 
 //user fav stories const $favUserStories = $("#") //me
 //user authored stories const $userAuthorStories = $("#"") //me
@@ -37,10 +39,21 @@ function hidePageComponents() {
     $allStoriesList,
     $loginForm,
     $signupForm,
+    $storySubmissionForm,
     $favList,
-    $storySubmissionForm
+    $myStoriesList
   ];
   components.forEach(c => c.hide());
+}
+
+// Hide User Navigation Features
+function hideUserNavigation() {
+  const userFeatures = [
+    $navSubmit,
+    $navFav,
+    $navMyStory
+  ]
+  userFeatures.forEach(f => f.hide());
 }
 
 /** Overall function to kick off the app. */
@@ -54,6 +67,7 @@ async function start() {
 
   // if we got a logged-in user
   if (currentUser) updateUIOnUserLogin();
+  if (!currentUser) hideUserNavigation();
 }
 
 // Once the DOM is entirely loaded, begin the app

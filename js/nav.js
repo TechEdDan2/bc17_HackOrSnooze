@@ -31,12 +31,14 @@ $navLogin.on("click", navLoginClick);
 
 function updateNavOnLogin() {
   console.debug("updateNavOnLogin");
-  $(".user-nav-links").show();
+  // $(".user-nav-links").show();
   $navLogin.hide();
   $navLogOut.show();
-  $userNavLinks.removeClass('hidden');//////////HELP
+  $userNavLinks.show();
+  $navSubmit.show();
+  $navFav.show();
+  $navMyStory.show();
   $navUserProfile.text(`${currentUser.username}`).show();
-
 }
 
 /**
@@ -65,7 +67,8 @@ function getFavoritesList(evt) {
   console.debug("getFavoritesList", evt);
   evt.preventDefault();
   hidePageComponents();
-  //$storySubmissionForm.show();
+  getFavoritesOnPage();
+  $favList.show();
   console.log("nav favorites clicked");
 
 }
@@ -77,7 +80,7 @@ function getMyStoriesList(evt) {
   console.debug("getMyStoriesList", evt);
   evt.preventDefault();
   hidePageComponents();
-  //$storySubmissionForm.show();
+  $myStoriesList.show();
   console.log("nav my stories clicked");
 
 }

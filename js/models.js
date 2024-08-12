@@ -24,8 +24,9 @@ class Story {
   /** Parses hostname out of URL and returns it. */
 
   getHostName() {
-    // UNIMPLEMENTED: complete this function!
-    return "hostname.com";
+    const storyURL = new URL(this.url)
+    console.log(storyURL);
+    return storyURL.hostname;
   }
 
   static async getStoryById(storyId) {
@@ -56,7 +57,8 @@ class StoryList {
     // Note presence of `static` keyword: this indicates that getStories is
     //  **not** an instance method. Rather, it is a method that is called on the
     //  class directly. Why doesn't it make sense for getStories to be an
-    //  instance method?
+    //  instance method? - a static method can be accessed without an  
+    //  instance  
 
     // query the /stories endpoint (no auth required)
     const response = await axios({
@@ -115,7 +117,6 @@ class StoryList {
     this.stories = this.stories.filter(story => story.storyId !== storyId);
     user.ownStories = this.ownStories.filter(story => story.storyId !== storyId);
     user.favorites = this.favorites.filter(story => story.storyId !== storyId);
-
   }
 }
 
@@ -185,6 +186,7 @@ class User {
    */
 
   static async login(username, password) {
+
     const response = await axios({
       url: `${BASE_URL}/login`,
       method: "POST",
@@ -203,6 +205,8 @@ class User {
       },
       response.data.token
     );
+
+
   }
 
   /** When we already have credentials (token & username) for a user,
@@ -252,13 +256,16 @@ class User {
 
   async unFavorite(story) {
     console.log("unFavorite ran");
+    // Use filter to help remove the story with matching StoryID
+    this.favorites = this.favorites.filter(
+      item => item.storyId !== story.storyId);
+
+    //Update the User's Data
     const response = await axios({
       url: `${BASE_URL}/users/${this.username}/favorites/${story.storyId}`,
       method: "DELETE",
       data: { token: this.loginToken }
     });
-    this.favorites = this.favorites.filter(
-      item => item.storyId !== story.storyId);
   }
 
   isFavorite(story) {
@@ -266,5 +273,6 @@ class User {
       return favSory.storyId === story.storyId;
     });
   }
+
 
 }
