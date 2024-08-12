@@ -91,7 +91,6 @@ function updateUI(closestListId) {
 }
 
 
-
 //Update Fav List
 async function updateFav(e) {
   console.log("heart clicked");
@@ -122,13 +121,6 @@ async function updateFav(e) {
     await currentUser.unFavorite($trgtStory);
   }
 
-  // if ($target.hasClass("fas fa-heart")) {
-  //   await currentUser.removeFavorite($trgtStory);
-  //   $targetI.toggleClass("far fa-heart");
-  // } else {
-  //   await currentUser.addFavorite($trgtStory);
-  //   $targetI.toggleClass("fas fa-heart");
-  // }
 
   updateUI($closestListId);
 
@@ -177,6 +169,7 @@ async function submitNewStory(e) {
   $allStoriesList.prepend(generateStoryMarkup(newStory));
 
 
+
 }
 
 $storySubmissionForm.on('submit', submitNewStory);
@@ -184,22 +177,35 @@ $storySubmissionForm.on('submit', submitNewStory);
 // TODO add Story to favorite list
 function getMyStoriesOnPage() {
   $myStoriesList.empty();
-  // loop through all user owned stories and generate HTML for them
-  for (let story of currentUser.ownStories) {
-    let $story = generateStoryMarkup(story);
-    $myStoriesList.append($story);
+
+  if (currentUser.ownStories.length === 0) {
+    $myStoriesList.append("<h3>You currently haven't added any stories</h3>");
+  } else {
+    // loop through all user owned stories and generate HTML for them
+    for (let story of currentUser.ownStories) {
+      // pass true for second param to display trashcan
+      let $story = generateStoryMarkup(story, true);
+      $myStoriesList.append($story);
+    }
   }
-  // $myStoriesList.show();
+
+  $myStoriesList.show();
 }
 
 function getFavoritesOnPage() {
+  console.log("getFavOnPage was called");
   $favList.empty();
 
-  // loop through all favorite stories and generate HTML for them
-  for (let story of currentUser.favorites) {
-    let $story = generateStoryMarkup(story);
-    $favList.append($story);
+  if (currentUser.favorites.length === 0) {
+    $favList.append("<h3>You currently haven't added any stories</h3>");
+  } else {
+    // loop through all favorite stories and generate HTML for them
+    for (let story of currentUser.favorites) {
+      let $story = generateStoryMarkup(story, true);
+      $favList.append($story);
+    }
   }
 
-  // $favList.show();
+  $favList.show();
+  console.log($favList.children());
 }
