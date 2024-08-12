@@ -26,13 +26,13 @@ function generateStoryMarkup(story, showDeleteBtn = false) {
   const hostName = story.getHostName();
 
   //Display stars based on user
-  const showStar = Boolean(currentUser);
+  const showHeart = Boolean(currentUser);
 
   return $(`
       <li id="${story.storyId}">
         <div>
         ${showDeleteBtn ? getDeleteBtn() : ""}
-        ${showStar ? getStar(story, currentUser) : ""}
+        ${showHeart ? getHeart(story, currentUser) : ""}
         <a href="${story.url}" target="a_blank" class="story-link">
           ${story.title}
         </a>
@@ -51,14 +51,90 @@ function getDeleteBtn() {
           </span>`;
 }
 
-// Create the HTML for the star button
-function getStar(story, user) {
+// Create the HTML for the heart button
+function getHeart(story, user) {
   const isFav = user.isFavorite(story);
-  const starFill = isFav ? "fas" : "far";
-  return `<span class="star">
-            <i class="${starFill} fa-star"></i>
+  const heartFill = isFav ? "fas" : "far";
+  return `<span class="heartBtn">
+            <i class="${heartFill} fa-heart"></i>
           </span>`;
 }
+
+//Trash a story
+async function trashStory(e) {
+  let $target = $(e.target);
+  console.log(`Clicked: ${$target}`);
+  let $closestListId = $target.closest("ol").attr("id");
+  let $trgtStoryId = $target.closest("li").attr("id");
+  console.log(`StoryID: ${$trgtStoryId}`);
+  let $trgtStory = storyList.stories.filter(story =>
+    story.storyId === $trgtStoryId);
+
+  await currentUser.unFavorite($trgtStory);
+  await storyList.deleteStory(currentUser, $trgtStoryId);
+
+  //update all list TO DO
+  updateUI($closestListId);
+
+}
+$storiesList.on("click", ".trashCan", trashStory);
+
+// Updates the stories shown based on the specific list selected to ensure the correct updated stories show on the screen.  Updates UI without a reload.  Used for deleting and favorite-ing stories
+function updateUI(closestListId) {
+  if (closestListId === "all-stories-list") {
+    getAndShowStoriesOnStart();
+  } else if (closestListId === "favList") {
+    putFavoritesOnPage();
+  } else if (closestListId === "mStoriesList") {
+    putOwnStoriesOnPage();
+  }
+}
+
+
+
+//Update Fav List
+async function updateFav(e) {
+  console.log("heart clicked");
+
+  let $target = $(e.target);
+  console.log(`this is the target ${$target}`);
+
+  let $targetI = $target.closest("i").attr("class");
+  console.log(`this is the target I: ${$targetI}`);
+
+  let $trgtStoryId = $target.closest("li").attr("id");
+  console.log(`this is the target Story ID: ${$trgtStoryId}`);
+
+  let $trgtStory = storyList.stories.find((story) => story.storyId === $trgtStoryId);
+  console.log(`this is the story ${$trgtStory}`);
+
+  let $closestListId = $target.closest("ol").attr("id");
+  console.log(`this is the closest list ID: ${$closestListId}`);
+
+  if ($target.hasClass("far fa-heart")) {
+    $target.toggleClass("fas fa-heart");
+    console.log(`I changed the target I attr: ${$targetI}`);
+    await currentUser.addFavorite($trgtStory);
+  } else {
+    $target.removeClass("fas fa-heart");
+    $target.addClass("far fa-heart")
+    console.log("Unheart");
+    await currentUser.unFavorite($trgtStory);
+  }
+
+  // if ($target.hasClass("fas fa-heart")) {
+  //   await currentUser.removeFavorite($trgtStory);
+  //   $targetI.toggleClass("far fa-heart");
+  // } else {
+  //   await currentUser.addFavorite($trgtStory);
+  //   $targetI.toggleClass("fas fa-heart");
+  // }
+
+  updateUI($closestListId);
+
+}
+
+$storiesList.on("click", ".heartBtn", updateFav);
 
 /** Gets list of stories from server, generates their HTML, and puts on page. */
 
@@ -100,9 +176,30 @@ async function submitNewStory(e) {
   $storySubmissionForm.hide();
   $allStoriesList.prepend(generateStoryMarkup(newStory));
 
+
 }
 
 $storySubmissionForm.on('submit', submitNewStory);
 
 // TODO add Story to favorite list
+function getMyStoriesOnPage() {
+  $myStoriesList.empty();
+  // loop through all user owned stories and generate HTML for them
+  for (let story of currentUser.ownStories) {
+    let $story = generateStoryMarkup(story);
+    $myStoriesList.append($story);
+  }
+  // $myStoriesList.show();
+}
 
+function getFavoritesOnPage() {
+  $favList.empty();
+
+  // loop through all favorite stories and generate HTML for them
+  for (let story of currentUser.favorites) {
+    let $story = generateStoryMarkup(story);
+    $favList.append($story);
+  }
+
+  // $favList.show();
+}
