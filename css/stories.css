@@ -4,11 +4,16 @@
   margin: 20px 5px;
 }
 
-.stories-list > li {
+.stories-list>li {
   color: gray;
   font-size: 0.8rem;
   margin: 10px 0;
+  border-bottom: 1px solid lightgray;
+  padding: 0 0.5rem;
 }
+
+#favList,
+#myStoriesList {}
 
 #stories-loading-msg {
   font-weight: bold;
@@ -26,14 +31,32 @@
   margin: 18px 0;
 }
 
+.trashCan,
+.heartBtn {
+  font-size: 0.85rem;
+  margin: 0 0.25rem;
+  cursor: nw-resize;
+}
+
+.trashCan:hover {
+  color: red;
+}
+
 .story-link:hover {
   text-decoration: none;
 }
 
 .story-author {
+  display: block;
   margin-left: 2em;
+  font-size: 1rem;
+  color: green;
+  padding: 0.5rem 0;
 }
 
 .story-user {
   display: block;
+  margin-left: 2em;
+  font-size: 1rem;
+  color: orange;
 }

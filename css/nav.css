@@ -10,11 +10,29 @@ nav {
 
 .navbar-brand {
   font-weight: bold;
+  align-self: center;
+  font-size: 1.5rem;
 }
 
 .nav-link {
   font-size: 0.85rem;
   margin: 0 3px;
+}
+
+.user-nav-links {
+  margin-left: 0.75rem;
+  justify-content: center;
+  align-items: center;
+  font-size: 1.5rem;
+}
+
+.user-nav-links a {
+  border-left: 2px solid black;
+  padding-left: 0.25rem;
+}
+
+.user-nav-links a:hover {
+  font-weight: bolder;
 }
 
 .nav-right {
