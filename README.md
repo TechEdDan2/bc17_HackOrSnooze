@@ -34,6 +34,7 @@ Users should be able to:
 ![](./images/ScreenshotAccountForm.png)
 ![](./images/ScreenshotUserNav.png)
 ![](./images/ScreenshotArticleSubForm.png)
+![](./images/ScreenshotUMLDiagram.png)
 
 
 ### Links
@@ -66,7 +67,7 @@ This was a challenging exercise to complete, and I would like to update aspects 
 
 - [MDN](https://developer.mozilla.org/en-US/docs/Web/API/Document_Object_Model) - This helped me when using the Document Object Model to create this project. 
 - [Axios API](https://axios-http.com/docs/api_intro) - The Axios API docs helped a lot to review syntax and look up functions. 
-- [Hack or Snooze API] (https://hackorsnoozev3.docs.apiary.io/#) - The Hack or Snooze API helped with endpoints
+- [Hack or Snooze API](https://hackorsnoozev3.docs.apiary.io/#) - The Hack or Snooze API helped with endpoints
 - [Udemy](https://www.udemy.com/course/the-web-developer-bootcamp) - This Udemy course has helped me to brush up on how to use the DOM. I'd recommend it to anyone still learning this concept.
 - [Springboard](https://www.springboard.com/) - This is the Bootcamp where I am currently gaining a deeper understanding of JavaScript and many other full stack languages, workflows, and concepts.  
 
