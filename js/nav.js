@@ -65,7 +65,6 @@ $navSubmit.on("click", getStorySubmissionForm);
 //Favorites function for clicking on fav btn
 function getFavoritesList(evt) {
   console.debug("getFavoritesList", evt);
-  evt.preventDefault();
   hidePageComponents();
   getFavoritesOnPage();
   $favList.show();
@@ -78,8 +77,9 @@ $navFav.on("click", getFavoritesList);
 //My Stories
 function getMyStoriesList(evt) {
   console.debug("getMyStoriesList", evt);
-  evt.preventDefault();
+  // evt.preventDefault();
   hidePageComponents();
+  getMyStoriesOnPage();
   $myStoriesList.show();
   console.log("nav my stories clicked");
 

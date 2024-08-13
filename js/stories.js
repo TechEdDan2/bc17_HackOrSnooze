@@ -62,19 +62,26 @@ function getHeart(story, user) {
 
 //Trash a story
 async function trashStory(e) {
+  console.debug("trashStory");
   let $target = $(e.target);
   console.log(`Clicked: ${$target}`);
+
   let $closestListId = $target.closest("ol").attr("id");
   let $trgtStoryId = $target.closest("li").attr("id");
   console.log(`StoryID: ${$trgtStoryId}`);
-  let $trgtStory = storyList.stories.filter(story =>
-    story.storyId === $trgtStoryId);
 
-  await currentUser.unFavorite($trgtStory);
+  // let $trgtStory = storyList.stories.filter(story =>
+  //   story.storyId === $trgtStoryId);
+
+  // await currentUser.unFavorite($trgtStory);
   await storyList.deleteStory(currentUser, $trgtStoryId);
 
   //update all list TO DO
   updateUI($closestListId);
+  hidePageComponents();
+  putStoriesOnPage();
+  $allStoriesList.show();
+
 
 }
 $storiesList.on("click", ".trashCan", trashStory);
@@ -121,7 +128,7 @@ async function updateFav(e) {
     await currentUser.unFavorite($trgtStory);
   }
 
-
+  putStoriesOnPage();
   updateUI($closestListId);
 
 }
@@ -176,13 +183,20 @@ $storySubmissionForm.on('submit', submitNewStory);
 
 // TODO add Story to favorite list
 function getMyStoriesOnPage() {
+  console.log("getMyStoriesOn called");
+  console.log(currentUser.ownStories);
+
+
   $myStoriesList.empty();
+
 
   if (currentUser.ownStories.length === 0) {
     $myStoriesList.append("<h3>You currently haven't added any stories</h3>");
+    console.log("if Ex for getOwnPage");
   } else {
     // loop through all user owned stories and generate HTML for them
     for (let story of currentUser.ownStories) {
+      console.log("else Ex for getOwnPage");
       // pass true for second param to display trashcan
       let $story = generateStoryMarkup(story, true);
       $myStoriesList.append($story);
@@ -192,20 +206,29 @@ function getMyStoriesOnPage() {
   $myStoriesList.show();
 }
 
-function getFavoritesOnPage() {
+async function getFavoritesOnPage() {
   console.log("getFavOnPage was called");
+
+  console.log(currentUser.favorites);
+  console.log(currentUser.favorites.length);
+
+
   $favList.empty();
 
   if (currentUser.favorites.length === 0) {
-    $favList.append("<h3>You currently haven't added any stories</h3>");
+    $favList.append("<h3>You currently haven't added any stories to your Favs</h3>");
+    console.log("if Ex for getFavPage");
   } else {
+    console.log("else Ex for getFavPage");
     // loop through all favorite stories and generate HTML for them
     for (let story of currentUser.favorites) {
-      let $story = generateStoryMarkup(story, true);
+      let $story = generateStoryMarkup(story);
       $favList.append($story);
     }
   }
 
+  console.log("Take a look at my favs:")
+  console.log(currentUser.favorites);
+
   $favList.show();
-  console.log($favList.children());
 }
