@@ -33,7 +33,6 @@ const $userProfile = $("#userProfile");
  * is a useful function that hides pretty much everything on the page. After
  * calling this, individual components can re-show just what they want.
  */
-
 function hidePageComponents() {
   const components = [
     $allStoriesList,
@@ -46,7 +45,11 @@ function hidePageComponents() {
   components.forEach(c => c.hide());
 }
 
-// Hide User Navigation Features
+// 
+/**
+ * Hide User Navigation Features prior 
+ *  to login or after logout
+ */
 function hideUserNavigation() {
   const userFeatures = [
     $navSubmit,
@@ -56,8 +59,11 @@ function hideUserNavigation() {
   userFeatures.forEach(f => f.hide());
 }
 
-/** Overall function to kick off the app. */
 
+/**
+ *  Overall function to kick off the app. 
+ *   This will check localStorage for credentials 
+ */
 async function start() {
   console.debug("start");
 
@@ -71,7 +77,6 @@ async function start() {
 }
 
 // Once the DOM is entirely loaded, begin the app
-
 console.warn("HEY STUDENT: This program sends many debug messages to" +
   " the console. If you don't see the message 'start' below this, you're not" +
   " seeing those helpful debug messages. In your browser console, click on" +

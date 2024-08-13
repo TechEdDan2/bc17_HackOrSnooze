@@ -3,8 +3,13 @@
 // This is the global list of the stories, an instance of StoryList
 let storyList;
 
-/** Get and show stories when site first loads. */
 
+/**
+ * Fetches a list of stories, removes the loading message, 
+ *  and displays the stories on the page.
+ *
+ * @async
+ */
 async function getAndShowStoriesOnStart() {
   storyList = await StoryList.getStories();
   $storiesLoadingMsg.remove();
@@ -13,12 +18,11 @@ async function getAndShowStoriesOnStart() {
 }
 
 /**
- * A render method to render HTML for an individual Story instance
- * - story: an instance of Story
- * - show the delete button 
- * - show the star button
+ * Generates HTML markup representing a single Story instance.
  *
- * Returns the markup for the story.
+ * @param {Story} story The story object containing story information.
+ * @param {boolean} [showDeleteBtn=false] Whether to include a delete button (optional). Defaults to false.
+ * @returns {jQuery} A jQuery object containing the generated story markup.
  */
 function generateStoryMarkup(story, showDeleteBtn = false) {
   // console.debug("generateStoryMarkup", story);
@@ -44,14 +48,25 @@ function generateStoryMarkup(story, showDeleteBtn = false) {
     `);
 }
 
-// Create the HTML for the delete button trash can
+/**
+ * Generates HTML markup for a delete button.
+ *
+ * @returns {string} The HTML string representing the delete button.
+ */
 function getDeleteBtn() {
   return `<span class="trashCan">
             <i class="fas fa-trash"></i>
           </span>`;
 }
 
-// Create the HTML for the heart button
+/**
+ * Generates HTML markup for a heart button, indicating 
+ *  whether the story is favorited.
+ *
+ * @param {Story} story The story object.
+ * @param {User} user The user object.
+ * @returns {string} The HTML string representing the heart button.
+ */
 function getHeart(story, user) {
   const isFav = user.isFavorite(story);
   const heartFill = isFav ? "fas" : "far";
@@ -60,20 +75,25 @@ function getHeart(story, user) {
           </span>`;
 }
 
-//Trash a story
+/**
+ * Handles the click event on a trash can icon associated with a story.
+ * Extracts the ID of the closest parent <ol> element ($closestListId), 
+ * which represents the story list container.
+ * 
+ * Deletes the story, updates the UI, and potentially hides/shows 
+ * page components.
+ *
+ * @param {Event} e The click event object.
+ * @async
+ * @returns {Promise<void>} Resolves when the story deletion and UI update are complete.
+ */
 async function trashStory(e) {
   console.debug("trashStory");
   let $target = $(e.target);
-  console.log(`Clicked: ${$target}`);
 
   let $closestListId = $target.closest("ol").attr("id");
   let $trgtStoryId = $target.closest("li").attr("id");
-  console.log(`StoryID: ${$trgtStoryId}`);
 
-  // let $trgtStory = storyList.stories.filter(story =>
-  //   story.storyId === $trgtStoryId);
-
-  // await currentUser.unFavorite($trgtStory);
   await storyList.deleteStory(currentUser, $trgtStoryId);
 
   //update all list TO DO
@@ -82,11 +102,16 @@ async function trashStory(e) {
   putStoriesOnPage();
   $allStoriesList.show();
 
-
 }
 $storiesList.on("click", ".trashCan", trashStory);
 
-// Updates the stories shown based on the specific list selected to ensure the correct updated stories show on the screen.  Updates UI without a reload.  Used for deleting and favorite-ing stories
+/**
+ * Updates the UI based on the specified list ID.
+ * 
+ * Used for deleting and favorite-ing stories
+ *
+ * @param {string} closestListId The ID of the closest list element.
+ */
 function updateUI(closestListId) {
   if (closestListId === "all-stories-list") {
     getAndShowStoriesOnStart();
@@ -98,33 +123,28 @@ function updateUI(closestListId) {
 }
 
 
-//Update Fav List
+/**
+ * Handles clicks on the heart icon associated with a story.
+ * Toggles the story's favorited state for the user and updates the UI.
+ *
+ * @param {Event} e The click event object.
+ * @returns {Promise<void>} Resolves when the favorite update and UI update are complete.
+ */
 async function updateFav(e) {
-  console.log("heart clicked");
-
   let $target = $(e.target);
-  console.log(`this is the target ${$target}`);
-
   let $targetI = $target.closest("i").attr("class");
-  console.log(`this is the target I: ${$targetI}`);
 
   let $trgtStoryId = $target.closest("li").attr("id");
-  console.log(`this is the target Story ID: ${$trgtStoryId}`);
-
   let $trgtStory = storyList.stories.find((story) => story.storyId === $trgtStoryId);
-  console.log(`this is the story ${$trgtStory}`);
 
   let $closestListId = $target.closest("ol").attr("id");
-  console.log(`this is the closest list ID: ${$closestListId}`);
 
   if ($target.hasClass("far fa-heart")) {
     $target.toggleClass("fas fa-heart");
-    console.log(`I changed the target I attr: ${$targetI}`);
     await currentUser.addFavorite($trgtStory);
   } else {
     $target.removeClass("fas fa-heart");
-    $target.addClass("far fa-heart")
-    console.log("Unheart");
+    $target.addClass("far fa-heart");
     await currentUser.unFavorite($trgtStory);
   }
 
@@ -135,8 +155,10 @@ async function updateFav(e) {
 
 $storiesList.on("click", ".heartBtn", updateFav);
 
-/** Gets list of stories from server, generates their HTML, and puts on page. */
-
+/**
+ * Clears existing content, gets list of stories from server, 
+ *  generates markup for each story, and appends it to the list.
+ */
 function putStoriesOnPage() {
   console.debug("putStoriesOnPage");
 
@@ -151,20 +173,24 @@ function putStoriesOnPage() {
   $allStoriesList.show();
 }
 
-//Handle Submitting Stories
+/**
+ * Handles the submission of a new story.
+ * 
+ * Collects story data, creates a new story, adds the new story 
+ *  to the global story list, and updates the UI.
+ *
+ * @param {Event} e The submission event object.
+ * @returns {Promise<void>} Resolves when the new story is added and the UI is updated.
+ */
 async function submitNewStory(e) {
   console.debug("submitNewStory");
   e.preventDefault();
 
-  //Collect new story form data
   const author = $("#authorInput").val();
   const title = $("#titleInput").val();
   const url = $("#urlInput").val();
   const username = currentUser.username;
   const newStoryData = { title, url, author, username };
-
-  // Add this new story to the Global Story List
-  // storySubmissionForm
 
   const newStory = await storyList.addStory(
     currentUser,
@@ -174,30 +200,27 @@ async function submitNewStory(e) {
   $storySubmissionForm.trigger("reset");
   $storySubmissionForm.hide();
   $allStoriesList.prepend(generateStoryMarkup(newStory));
-
-
-
 }
 
 $storySubmissionForm.on('submit', submitNewStory);
 
-// TODO add Story to favorite list
+/**
+ * Populates the user's own stories list with appropriate content.
+ * 
+ * Clears existing content, displays a message if no stories exist,
+ *  else it generates HTML markup with trashcans for each user story and 
+ *  appends it to the list.
+ * 
+ */
 function getMyStoriesOnPage() {
-  console.log("getMyStoriesOn called");
-  console.log(currentUser.ownStories);
-
 
   $myStoriesList.empty();
 
 
   if (currentUser.ownStories.length === 0) {
     $myStoriesList.append("<h3>You currently haven't added any stories</h3>");
-    console.log("if Ex for getOwnPage");
   } else {
-    // loop through all user owned stories and generate HTML for them
     for (let story of currentUser.ownStories) {
-      console.log("else Ex for getOwnPage");
-      // pass true for second param to display trashcan
       let $story = generateStoryMarkup(story, true);
       $myStoriesList.append($story);
     }
@@ -206,29 +229,25 @@ function getMyStoriesOnPage() {
   $myStoriesList.show();
 }
 
+/**
+ * Populates the user's favorites list with appropriate content.
+ * 
+ * Clears existing content, displays a message if no favorites exist,
+ *  else it generates HTML markup for each favorite story and appends 
+ *  it to the list.
+ */
 async function getFavoritesOnPage() {
-  console.log("getFavOnPage was called");
-
-  console.log(currentUser.favorites);
-  console.log(currentUser.favorites.length);
-
-
   $favList.empty();
 
   if (currentUser.favorites.length === 0) {
     $favList.append("<h3>You currently haven't added any stories to your Favs</h3>");
-    console.log("if Ex for getFavPage");
   } else {
-    console.log("else Ex for getFavPage");
     // loop through all favorite stories and generate HTML for them
     for (let story of currentUser.favorites) {
       let $story = generateStoryMarkup(story);
       $favList.append($story);
     }
   }
-
-  console.log("Take a look at my favs:")
-  console.log(currentUser.favorites);
 
   $favList.show();
 }

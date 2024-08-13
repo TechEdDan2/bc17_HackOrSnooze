@@ -8,10 +8,13 @@ const BASE_URL = "https://hack-or-snooze-v3.herokuapp.com";
 
 class Story {
 
-  /** Make instance of Story from data object about story:
-   *   - {title, author, url, username, storyId, createdAt}
-   */
 
+  /**
+   * Make instance of Story from data object about story:
+   *   - {title, author, url, username, storyId, createdAt}
+   * 
+   * @param {Object} object constructor expects an object with the listed properties 
+   */
   constructor({ storyId, title, author, url, username, createdAt }) {
     this.storyId = storyId;
     this.title = title;
@@ -21,14 +24,25 @@ class Story {
     this.createdAt = createdAt;
   }
 
-  /** Parses hostname out of URL and returns it. */
-
+  /**
+   * Parses hostname out of URL and returns it.
+   * 
+   * @returns the hostname from the story's URL
+   */
   getHostName() {
     const storyURL = new URL(this.url)
     console.log(storyURL);
     return storyURL.hostname;
   }
 
+  /**
+ * Retrieves a story by its ID from the server and creates a Story instance.
+ *
+ * @static
+ * @async
+ * @param {string} storyId The ID of the story to retrieve.
+ * @returns {Promise<Story>} A Promise that resolves to a Story object.
+ */
   static async getStoryById(storyId) {
     let res = await axios.get(`${BASE_URL}/stories/${storyId}`);
     return new Story(res.data.story);
@@ -52,7 +66,6 @@ class StoryList {
    *  - makes a single StoryList instance out of that
    *  - returns the StoryList instance.
    */
-
   static async getStories() {
     // Note presence of `static` keyword: this indicates that getStories is
     //  **not** an instance method. Rather, it is a method that is called on the
@@ -73,9 +86,9 @@ class StoryList {
     return new StoryList(stories);
   }
 
-  /** Adds story data to API, makes a Story instance, adds it to story list.
-   * - user - the current instance of User who will post the story
-   * - obj of {title, author, url}
+  /**
+   * Adds a new story to the server and creates a Story instance.
+   *
    * - Example
    * {
    *  "token": "YOUR_TOKEN_HERE",
@@ -83,11 +96,17 @@ class StoryList {
    *    "author": "Matt Lane",
    *    "title": "The best story ever",
    *    "url": "http://google.com"
-      }
-    }
-   * Returns the new Story instance
+   *  }
+   * }
+   * 
+   * @async
+   * @param {User} user The user object representing the current user.
+   * @param {object} storyData An object containing the new story's details.
+   * @param {string} storyData.title The title of the story.
+   * @param {string} storyData.author The author of the story.
+   * @param {string} storyData.url The URL of the story.
+   * @returns {Promise<Story>} A Promise that resolves to a newly created Story object.
    */
-
   async addStory(user, { title, author, url }) {
     const token = user.loginToken;
     console.log(token);
@@ -109,6 +128,13 @@ class StoryList {
     return story;
   }
 
+  /**
+   * Deletes a story from the server and updates local data structures.
+   * 
+   * @async
+   * @param {User} user The user object representing the current user.
+   * @param {string} storyId The ID of the story to delete.
+   */
   async deleteStory(user, storyId) {
     const token = user.loginToken;
     console.log(`Current User Token: ${token}`);
@@ -134,11 +160,19 @@ class StoryList {
  */
 
 class User {
-  /** Make user instance from obj of user data and a token:
-   *   - {username, name, createdAt, favorites[], ownStories[]}
-   *   - token
-   */
 
+  /**
+   * Creates a User instance from a data object and login token.
+   * 
+   * @constructor
+   * @param {object} userData An object containing user details.
+   * @param {string} userData.username The username of the user.
+   * @param {string} [userData.name] The user's display name (optional).
+   * @param {Date} userData.createdAt The date and time the user account was created.
+   * @param {Story[]} [userData.favorites=[]] An array of Story objects representing the user's favorites (optional, defaults to empty array).
+   * @param {Story[]} [userData.ownStories=[]] An array of Story objects representing the user's own stories (optional, defaults to empty array).
+   * @param {string} token The user's login token.
+   */
   constructor({
     username,
     name,
@@ -159,13 +193,16 @@ class User {
     this.loginToken = token;
   }
 
-  /** Register new user in API, make User instance & return it.
-   *
-   * - username: a new username
-   * - password: a new password
-   * - name: the user's full name
+  /**
+   * Register new user in API, make User instance & return it.
+   * 
+   * @static
+   * @async
+   * @param {string} username The desired username for the new account.
+   * @param {string} password The password for the new account.
+   * @param {string} [name] The user's display name (optional).
+   * @returns {Promise<User>} A Promise that resolves to a newly created User object.
    */
-
   static async signup(username, password, name) {
     const response = await axios({
       url: `${BASE_URL}/signup`,
@@ -187,12 +224,14 @@ class User {
     );
   }
 
-  /** Login in user with API, make User instance & return it.
-
-   * - username: an existing user's username
-   * - password: an existing user's password
+  /** 
+   * Login in user with API, make User instance & return it.
+   * @static
+   * @async
+   * @param {string} username The user's username.
+   * @param {string} password The user's password.
+   * @returns {Promise<User|null>} A Promise that resolves to a User object if login is successful, or null if it fails.
    */
-
   static async login(username, password) {
 
     const response = await axios({
@@ -214,13 +253,20 @@ class User {
       response.data.token
     );
 
-
   }
 
-  /** When we already have credentials (token & username) for a user,
-   *   we can log them in automatically. This function does that.
+  /**
+   * When we already have credentials (token & username) for a user, it
+   * attempts to log in a user using stored credentials (token and username).
+   * Fetches user data from the server and returns a User instance if successful.
+   * 
+   * @static
+   * @async
+   * @param {string} token The user's login token.
+   * @param {string} username The user's username.
+   * @returns {Promise<User|null>} A Promise that resolves to a User object if login is successful, or null if it fails.
+   * 
    */
-
   static async loginViaStoredCredentials(token, username) {
     try {
       const response = await axios({
@@ -248,7 +294,11 @@ class User {
   }
 
   /**
-   * Takes an instance of a story and adds to the user's favorites
+   * Takes an instance of a story and adds a story to the 
+   *  user's favorites list and updates the server.
+   * 
+   * @async
+   * @param {Story} story The story to add to favorites.
    */
   async addFavorite(story) {
     console.log("addFavorite ran");
@@ -260,15 +310,20 @@ class User {
     this.favorites.push(story);
   }
 
-  /** Takes a Story instance and removes it from the user's favorites */
-
+  /**
+   * Takes a Story instance and removes it from the user's favorites 
+   *  and updates the server.
+   * 
+   * To do this it uses filter to help remove the story with matching StoryID
+   * 
+   * @async
+   * @param {Story} story The story to remove from favorites.
+   */
   async unFavorite(story) {
     console.log("unFavorite ran");
-    // Use filter to help remove the story with matching StoryID
     this.favorites = this.favorites.filter(
       item => item.storyId !== story.storyId);
 
-    //Update the User's Data
     const response = await axios({
       url: `${BASE_URL}/users/${this.username}/favorites/${story.storyId}`,
       method: "DELETE",
@@ -276,6 +331,12 @@ class User {
     });
   }
 
+  /**
+   * Checks if the given story is in the user's favorites list.
+   * 
+   * @param {Story} story The story to check.
+   * @returns {boolean} True if the story is a favorite, false otherwise.
+   */
   isFavorite(story) {
     return this.favorites.some(function (favSory) {
       return favSory.storyId === story.storyId;
